@@ -1,0 +1,4 @@
+desc=Google Analytics Reporting
+category=servers
+depends=virtual-server
+version=1.0
