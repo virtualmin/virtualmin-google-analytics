@@ -1,0 +1,36 @@
+index_title=Virtualmin Google Analyics
+index_nodoms=You do not have access to any Virtualmin virtual servers.
+index_dom=Domain name
+index_status=Tracking status
+index_actions=Actions
+index_account=Tracking with account $1
+index_has=Enabled but no account set
+index_dis=Disabled
+index_edit=Edit Account
+index_desc=This page lists all virtual servers that you can manage. For those that have the Analytics feature enabled, you can set the account used for tracking hits with the <b>Edit</b> link.
+index_return=virtual server list
+
+feat_name=Google Analyics Tracking
+feat_losing=Google Analyics will no longer track hits to this virtual server
+feat_label=Enable Google Analyics tracking?
+feat_noperl=Apache's mod_perl must be installed
+feat_noapache=Apache version 2 must be installed
+feat_edepweb=Google Analyics cannot be enabled unless a website is
+feat_setup=Adding Google Analytics tracking to website configuration ..
+feat_novirt=.. no Apache virtualhost found!
+feat_delete=Removing Google Analytics tracking from website configuration ..
+
+edit_title=Edit Analyics Account
+edit_header=Google Analyics for virtual server
+edit_dom=Domain name
+edit_account=Account ID
+edit_dis=Not set (tracking disabled)
+edit_ena=Set to
+edit_ecannot=You are not allowed to manage this virtual server
+edit_ehas=This server does not have Google Analyics enabled
+
+save_err=Failed to save Analyics account
+save_eaccount=Missing or invalid account ID (like UA-12345-6)
+
+links_link=Google Analytics Account
+
