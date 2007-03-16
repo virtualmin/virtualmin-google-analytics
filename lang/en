@@ -19,6 +19,8 @@ feat_edepweb=Google Analyics cannot be enabled unless a website is
 feat_setup=Adding Google Analytics tracking to website configuration ..
 feat_novirt=.. no Apache virtualhost found!
 feat_delete=Removing Google Analytics tracking from website configuration ..
+feat_nomod=The $1 Perl module is not installed. Maybe mod_perl is not installed on your system, or it is an old version?
+feat_notvalid=The Apache directives for Google Analytics tracking are missing
 
 edit_title=Edit Analyics Account
 edit_header=Google Analyics for virtual server

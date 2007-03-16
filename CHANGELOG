@@ -1,2 +1,6 @@
 ---- Changes since 0.1 ----
 First version of this module, which allows analytics to be easily enabled for a virtual server.
+---- Changes since 1.0 ----
+Added import and validation support.
+Added check for version 2 of mod_perl.
+Fixed problem with removing Analytics Apache directives from a domain.

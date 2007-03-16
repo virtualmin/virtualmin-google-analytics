@@ -37,6 +37,8 @@ sub feature_check
 &virtual_server::require_apache();
 return $text{'feat_noperl'} if (!$apache::httpd_modules{'mod_perl'});
 return $text{'feat_noapache'} if ($apache::httpd_modules{'core'} < 2);
+eval "use Apache2::Filter";
+return &txt('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
 return undef;
 }
 
@@ -73,7 +75,8 @@ return $aliasdom ? 0 : 1;	# not for alias domains
 sub feature_import
 {
 local ($dname, $user, $db) = @_;
-# XXX check for directives
+local $fakedom = { 'dom' => $dname };
+return &has_analytics_directives($fakedom);
 }
 
 # feature_setup(&domain)
@@ -144,6 +147,7 @@ return 1;
 # Called when this feature is disabled, or when the domain is being deleted
 sub feature_delete
 {
+local ($d) = @_;
 &$virtual_server::first_print($text{'feat_delete'});
 
 &virtual_server::require_apache();
@@ -211,8 +215,7 @@ return ( { 'mod' => $module_name,
 sub feature_validate
 {
 local ($d) = @_;
-# XXX check for apache directives
-return undef;
+return &has_analytics_directives($d) ? undef : $text{'feat_notvalid'};
 }
 
 1;
