@@ -7,7 +7,13 @@ require './virtualmin-google-analytics-lib.pl';
 @doms = grep { &virtual_server::can_edit_domain($_) }
 	     &virtual_server::list_domains();
 if (!@doms) {
+	# User has no domains
 	print "<b>$text{'index_nodoms'}</b>\n";
+	}
+elsif (&indexof($module_name, @virtual_server::confplugins) < 0) {
+	# Plugin is not enabled
+	print "<b>",&text('index_eplugin',
+		"../virtual-server/edit_newplugins.cgi"),"</b><p>\n";
 	}
 else {
 	print $text{'index_desc'},"<p>\n";

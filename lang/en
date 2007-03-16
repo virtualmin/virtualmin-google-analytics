@@ -9,6 +9,7 @@ index_dis=Disabled
 index_edit=Edit Account
 index_desc=This page lists all virtual servers that you can manage. For those that have the Analytics feature enabled, you can set the account used for tracking hits with the <b>Edit</b> link.
 index_return=virtual server list
+index_eplugin=The Google Analytics plugin is not enabled in Virtualmin. Before it can be added to any virtual servers, it must be enabled on the <a href='$1'>Plugin Modules</a> page.
 
 feat_name=Google Analyics Tracking
 feat_losing=Google Analyics will no longer track hits to this virtual server
