@@ -23,7 +23,7 @@ else {
 		my $prog = &virtual_server::can_config_domain($d) ?
 				"edit_domain.cgi" : "view_domain.cgi";
 		print &ui_columns_row([
-			"<a href='$prog?dom=$d->{'id'}'>$d->{'dom'}</a>",
+			"<a href='../virtual-server/$prog?dom=$d->{'id'}'>$d->{'dom'}</a>",
 			$account ? &text('index_account', "<tt>$account</tt>") :
 			$has ? $text{'index_has'} : $text{'index_dis'},
 			&ui_links_row(\@actions)
