@@ -38,7 +38,7 @@ sub feature_check
 return $text{'feat_noperl'} if (!$apache::httpd_modules{'mod_perl'});
 return $text{'feat_noapache'} if ($apache::httpd_modules{'core'} < 2);
 eval "use Apache2::Filter";
-return &txt('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
+return &text('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
 return undef;
 }
 
