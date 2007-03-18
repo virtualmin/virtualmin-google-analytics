@@ -1,4 +1,4 @@
-desc=Google Analytics Reporting
+desc=Virtualmin Google Analytics
 category=servers
 depends=virtual-server
 version=1.2

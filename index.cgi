@@ -13,7 +13,7 @@ if (!@doms) {
 elsif (&indexof($module_name, @virtual_server::confplugins) < 0) {
 	# Plugin is not enabled
 	print "<b>",&text('index_eplugin',
-		"../virtual-server/edit_newplugins.cgi"),"</b><p>\n";
+		"../virtual-server/edit_newplugin.cgi"),"</b><p>\n";
 	}
 else {
 	print $text{'index_desc'},"<p>\n";

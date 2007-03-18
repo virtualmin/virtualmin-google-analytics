@@ -4,3 +4,5 @@ First version of this module, which allows analytics to be easily enabled for a 
 Added import and validation support.
 Added check for version 2 of mod_perl.
 Fixed problem with removing Analytics Apache directives from a domain.
+---- Changes since 1.1 ----
+Fixed typo that prevents missing mod_perl 2 error from appearing properly.
