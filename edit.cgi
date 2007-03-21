@@ -16,17 +16,13 @@ print &ui_table_start($text{'edit_header'}, undef, 2);
 
 print &ui_table_row($text{'edit_dom'}, "<tt>$d->{'dom'}</tt>");
 
-# Google Analytics account
-$account = &get_analytics_account($d);
-print &ui_table_row(&hlink($text{'edit_account'}, "account"),
-		    &ui_opt_textbox("account", $account, 20,
+# Show ID input for each account
+foreach $s (@tracking_services) {
+	$account = &{$s->[1]}($d);
+	print &ui_table_row(&hlink($text{'edit_'.$s->[0]}, $s->[0]),
+			    &ui_opt_textbox($s->[0], $account, 20,
 				    $text{'edit_dis'}, $text{'edit_ena'}));
-
-# MyBlogLog account
-$mybloglog = &get_mybloglog_account($d);
-print &ui_table_row(&hlink($text{'edit_mybloglog'}, "mybloglog"),
-		    &ui_opt_textbox("mybloglog", $mybloglog, 20,
-				    $text{'edit_dis'}, $text{'edit_ena'}));
+	}
 
 print &ui_table_end();
 print &ui_form_end([ [ "save", $text{'save'} ] ]);

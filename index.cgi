@@ -24,12 +24,14 @@ else {
 		$has = &has_analytics_directives($d);
 		@accounts = ( );
 		if ($has) {
-			$account = &get_analytics_account($d);
-			push(@accounts, &text('index_account', $account))
-				if ($account);
-			$mybloglog = &get_mybloglog_account($d);
-			push(@accounts, &text('index_mybloglog', $mybloglog))
-				if ($mybloglog);
+			# Find all tracking services
+			foreach $s (@tracking_services) {
+				$a = &{$s->[1]}($d);
+				if ($a) {
+					push(@account,
+					     &text('index_'.$a->[0], $a));
+					}
+				}
 			}
 		@actions = ( );
 		push(@actions, "<a href='edit.cgi?dom=$d->{'id'}'>".

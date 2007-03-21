@@ -6,6 +6,14 @@ do '../ui-lib.pl';
 %access = &get_module_acl();
 
 $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
+@tracking_services = (
+	[ 'account', \&get_analytics_account, \&save_analytics_account,
+	  '[A-Za-z0-9\\-]+' ],
+	[ 'mybloglog', \&get_mybloglog_account, \&save_mybloglog_account,
+	  '\\d+' ],
+	[ 'quantcast', \&get_quantcast_account, \&save_quantcast_account,
+	  '[A-Za-z0-9\\-]+' ],
+	);
 
 # get_analytics_account(&domain)
 # Returns the Google Analytics account ID for a virtual server, by looking
@@ -17,12 +25,21 @@ return &get_perlsetvar($d, "AnalyticsID");
 }
 
 # get_mybloglog_account(&domain)
-# Returns the Google Analytics account ID for a virtual server, by looking
+# Returns the MyBlogLog account ID for a virtual server, by looking
 # at the server's PerlSetVar directive.
 sub get_mybloglog_account
 {
 local ($d) = @_;
 return &get_perlsetvar($d, "MyBlogLogID");
+}
+
+# get_quantcast_account(&domain)
+# Returns the Quantcast account ID for a virtual server, by looking
+# at the server's PerlSetVar directive.
+sub get_quantcast_account
+{
+local ($d) = @_;
+return &get_perlsetvar($d, "QuantcastID");
 }
 
 # get_perlsetvar(&domain, name)
@@ -57,6 +74,14 @@ sub save_mybloglog_account
 {
 local ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "MyBlogLogID");
+}
+
+# save_quantcast_account(&domain, account)
+# Adds directives for the MyBlogLog account ID
+sub save_quantcast_account
+{
+local ($d, $account) = @_;
+return &save_perlsetvar($d, $account, "QuantcastID");
 }
 
 # save_perlsetvar(&domain, account, name)

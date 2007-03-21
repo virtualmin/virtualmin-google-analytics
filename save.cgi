@@ -9,15 +9,16 @@ require './virtualmin-google-analytics-lib.pl';
 $d = &virtual_server::get_domain($in{'dom'});
 &virtual_server::can_edit_domain($d) || &error($text{'edit_ecannot'});
 &has_analytics_directives($d) || &error($text{'edit_ehas'});
-$in{'account_def'} || $in{'account'} =~ /^[A-Za-z0-9\-]+$/ ||
-	&error($text{'save_eaccount'});
-$in{'mybloglog_def'} || $in{'mybloglog'} =~ /^\d+$/ ||
-	&error($text{'save_emybloglog'});
+foreach $s (@tracking_services) {
+	$in{$s->[0].'_def'} || $in{$s->[0]} =~ /^$s->[3]$/ ||
+		&error($text{'save_e'.$s->[0]});
+	}
 
 # Update the server
 &virtual_server::set_all_null_print();
-&save_analytics_account($d, $in{'account_def'} ? undef : $in{'account'});
-&save_mybloglog_account($d, $in{'mybloglog_def'} ? undef : $in{'mybloglog'});
+foreach $s (@tracking_services) {
+	&{$s->[2]}($d, $in{$s->[0].'_def'} ? undef : $in{$s->[0]});
+	}
 &virtual_server::run_post_actions();
 
 if ($in{'virtualmin'}) {
