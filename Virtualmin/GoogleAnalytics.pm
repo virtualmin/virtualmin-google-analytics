@@ -21,7 +21,8 @@ use constant BUFF_LEN => 1024;
 sub handler {
     my $f = shift;
     my $account = $f->r->dir_config("AnalyticsID");
-    if (!$account) {
+    my $mybloglog = $f->r->dir_config("MyBlogLogID");
+    if (!$account && !$mybloglog) {
       # No account set yet, so nothing to do!
       return Apache2::Const::DECLINED;
     }
@@ -33,7 +34,13 @@ sub handler {
     }
 
     # Work out the script we want to add
-    my $addscript = "<script src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\"></script> <script type=\"text/javascript\">_uacct = \"$account\"; urchinTracker();</script>";
+    my $addscript;
+    if ($account) {
+      $addscript .= "<script src=\"http://www.google-analytics.com/urchin.js\" type=\"text/javascript\"></script> <script type=\"text/javascript\">_uacct = \"$account\"; urchinTracker();</script>";
+    }
+    if ($mybloglog) {
+      $addscript .= "<script type=\"text/javascript\" src=\"http://track3.mybloglog.com/js/jsserv.php?mblID=$mybloglog\"></script>";
+    }
   
     # Clear the content length, as we modify it
     unless ($f->ctx) {

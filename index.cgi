@@ -22,7 +22,15 @@ else {
 				  $text{'index_actions'} ]);
 	foreach $d (@doms) {
 		$has = &has_analytics_directives($d);
-		$account = $has ? &get_analytics_account($d) : undef;
+		@accounts = ( );
+		if ($has) {
+			$account = &get_analytics_account($d);
+			push(@accounts, &text('index_account', $account))
+				if ($account);
+			$mybloglog = &get_mybloglog_account($d);
+			push(@accounts, &text('index_mybloglog', $mybloglog))
+				if ($mybloglog);
+			}
 		@actions = ( );
 		push(@actions, "<a href='edit.cgi?dom=$d->{'id'}'>".
 			       "$text{'index_edit'}</a>") if ($has);
@@ -30,7 +38,7 @@ else {
 				"edit_domain.cgi" : "view_domain.cgi";
 		print &ui_columns_row([
 			"<a href='../virtual-server/$prog?dom=$d->{'id'}'>$d->{'dom'}</a>",
-			$account ? &text('index_account', "<tt>$account</tt>") :
+			@accounts ? join("<br>", @accounts) :
 			$has ? $text{'index_has'} : $text{'index_dis'},
 			&ui_links_row(\@actions)
 			]);

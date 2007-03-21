@@ -16,10 +16,16 @@ print &ui_table_start($text{'edit_header'}, undef, 2);
 
 print &ui_table_row($text{'edit_dom'}, "<tt>$d->{'dom'}</tt>");
 
-# Analytics account
+# Google Analytics account
 $account = &get_analytics_account($d);
-print &ui_table_row($text{'edit_account'},
+print &ui_table_row(&hlink($text{'edit_account'}, "account"),
 		    &ui_opt_textbox("account", $account, 20,
+				    $text{'edit_dis'}, $text{'edit_ena'}));
+
+# MyBlogLog account
+$mybloglog = &get_mybloglog_account($d);
+print &ui_table_row(&hlink($text{'edit_mybloglog'}, "mybloglog"),
+		    &ui_opt_textbox("mybloglog", $mybloglog, 20,
 				    $text{'edit_dis'}, $text{'edit_ena'}));
 
 print &ui_table_end();

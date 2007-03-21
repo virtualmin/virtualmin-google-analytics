@@ -1,4 +1,4 @@
-desc=Virtualmin Google Analytics
+desc=Virtualmin Analytics
 category=servers
 depends=virtual-server
-version=1.2
+version=1.3
