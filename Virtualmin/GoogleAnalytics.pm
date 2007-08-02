@@ -34,6 +34,12 @@ sub handler {
       return Apache2::Const::DECLINED;
     }
 
+    # Do nothing if this is Javascript
+    my $fn = $f->r->filename();
+    if ($fn && $fn =~ /\.js/i) {
+      return Apache2::Const::DECLINED;
+    }
+
     # Work out the script we want to add
     my $addscript;
     if ($account) {
