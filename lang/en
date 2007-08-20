@@ -6,6 +6,7 @@ index_actions=Actions
 index_account=Google Analytics account $1
 index_mybloglog=MyBlogLog account $1
 index_quantcast=Quantcast account $1
+index_clicky=Clicking account $1
 index_has=Enabled but no account set
 index_dis=Disabled
 index_edit=Edit Account
@@ -33,6 +34,7 @@ edit_dis=Not set (tracking disabled)
 edit_ena=Set to
 edit_mybloglog=MyBlogLog account ID
 edit_quantcast=Quantcast account ID
+edit_clicky=Clicky account ID
 edit_ecannot=You are not allowed to manage this virtual server
 edit_ehas=This server does not have analyics tracking enabled
 
@@ -40,6 +42,7 @@ save_err=Failed to save analyics accounts
 save_eaccount=Missing or invalid Google Analytics account ID (like UA-12345-6)
 save_emybloglog=Missing or invalid MyBlogLog account ID (like 2006033112252119)
 save_equantcast=Missing or invalid Quantcast account ID (like p-19VXA69bF5MtA)
+save_eclicky=Missing or invalid Clicky account ID (like 12555)
 
 links_link=Analytics Accounts
 

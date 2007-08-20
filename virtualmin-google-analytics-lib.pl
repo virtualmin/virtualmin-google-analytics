@@ -13,6 +13,8 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 	  '\\d+' ],
 	[ 'quantcast', \&get_quantcast_account, \&save_quantcast_account,
 	  '[A-Za-z0-9\\-]+' ],
+	[ 'clicky', \&get_clicky_account, \&save_clicky_account,
+	  '[0-9]+' ],
 	);
 
 # get_analytics_account(&domain)
@@ -40,6 +42,15 @@ sub get_quantcast_account
 {
 local ($d) = @_;
 return &get_perlsetvar($d, "QuantcastID");
+}
+
+# get_clicky_account(&domain)
+# Returns the Clicky account ID for a virtual server, by looking
+# at the server's PerlSetVar directive.
+sub get_clicky_account
+{
+local ($d) = @_;
+return &get_perlsetvar($d, "ClickyID");
 }
 
 # get_perlsetvar(&domain, name)
@@ -82,6 +93,14 @@ sub save_quantcast_account
 {
 local ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "QuantcastID");
+}
+
+# save_clicky_account(&domain, account)
+# Adds directives for the Clicky account ID
+sub save_clicky_account
+{
+local ($d, $account) = @_;
+return &save_perlsetvar($d, $account, "ClickyID");
 }
 
 # save_perlsetvar(&domain, account, name)

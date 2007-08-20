@@ -23,7 +23,8 @@ sub handler {
     my $account = $f->r->dir_config("AnalyticsID");
     my $mybloglog = $f->r->dir_config("MyBlogLogID");
     my $quantcast = $f->r->dir_config("QuantcastID");
-    if (!$account && !$mybloglog && !$quantcast) {
+    my $clicky = $f->r->dir_config("ClickyID");
+    if (!$account && !$mybloglog && !$quantcast && !$clicky) {
       # No account set yet, so nothing to do!
       return Apache2::Const::DECLINED;
     }
@@ -50,6 +51,9 @@ sub handler {
     }
     if ($quantcast) {
       $addscript .= "<script type=\"text/javascript\" src=\"http://edge.quantserve.com/quant.js\"></script><script type=\"text/javascript\">_qacct=\"$quantcast\";quantserve();</script><noscript><img src=\"http://pixel.quantserve.com/pixel/$quantcast.gif\" style=\"display: none\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></noscript>";
+    }
+    if ($clicky) {
+      $addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
     }
   
     # Clear the content length, as we modify it
