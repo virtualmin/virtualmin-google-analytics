@@ -85,6 +85,8 @@ sub feature_setup
 {
 local ($d) = @_;
 &$virtual_server::first_print($text{'feat_setup'});
+&virtual_server::obtain_lock_web($_[0])
+        if (defined(&virtual_server::obtain_lock_web));
 
 &virtual_server::require_apache();
 local $conf = &apache::get_config();
@@ -111,8 +113,12 @@ foreach my $p (@ports) {
 	&flush_file_lines($virt->{'file'});
 	$done++;
 	}
+
+&virtual_server::release_lock_web($_[0])
+        if (defined(&virtual_server::release_lock_web));
 if ($done) {
 	&virtual_server::register_post_action(\&virtual_server::restart_apache);
+	return 1;
 	}
 else {
 	&$virtual_server::second_print($text{'feat_novirt'});
@@ -121,7 +127,7 @@ else {
 
 # Create apachemod.pl
 local $perl_path = &get_perl_path();
-&open_tempfile(CMD, ">$apachemod_lib_cmd");
+&open_lock_tempfile(CMD, ">$apachemod_lib_cmd");
 &print_tempfile(CMD, <<EOF
 #!$perl_path
 use lib '$module_root_directory';
@@ -149,6 +155,8 @@ sub feature_delete
 {
 local ($d) = @_;
 &$virtual_server::first_print($text{'feat_delete'});
+&virtual_server::obtain_lock_web($_[0])
+        if (defined(&virtual_server::obtain_lock_web));
 
 &virtual_server::require_apache();
 local $conf = &apache::get_config();
@@ -174,6 +182,8 @@ foreach my $p (@ports) {
 	$done++;
 	}
 
+&virtual_server::release_lock_web($_[0])
+        if (defined(&virtual_server::release_lock_web));
 if ($done) {
 	&virtual_server::register_post_action(\&virtual_server::restart_apache);
 	&$virtual_server::second_print($virtual_server::text{'setup_done'});
