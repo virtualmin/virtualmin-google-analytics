@@ -14,20 +14,20 @@ index_desc=This page lists all virtual servers that you can manage. For those th
 index_return=virtual server list
 index_eplugin=The Analytics plugin is not enabled in Virtualmin. Before it can be added to any virtual servers, it must be enabled on the <a href='$1'>Plugin Modules</a> page.
 
-feat_name=Analyics Tracking
-feat_losing=Analyics will no longer track hits to this virtual server
-feat_label=Enable Analyics tracking?
+feat_name=Analytics Tracking
+feat_losing=Analytics will no longer track hits to this virtual server
+feat_label=Enable Analytics tracking?
 feat_noperl=Apache's mod_perl version 2 must be installed
 feat_noapache=Apache version 2 must be installed
-feat_edepweb=Analyics cannot be enabled unless a website is
+feat_edepweb=Analytics cannot be enabled unless a website is
 feat_setup=Adding analytics tracking to website configuration ..
 feat_novirt=.. no Apache virtualhost found!
 feat_delete=Removing analytics tracking from website configuration ..
 feat_nomod=The $1 Perl module is not installed. Maybe mod_perl is not installed on your system, or it is not version 2?
 feat_notvalid=The Apache directives for analytics tracking are missing
 
-edit_title=Edit Analyics Accounts
-edit_header=Analyics IDs for virtual server
+edit_title=Edit Analytics Accounts
+edit_header=Analytics IDs for virtual server
 edit_dom=Domain name
 edit_account=Google Analytics account ID
 edit_dis=Not set (tracking disabled)

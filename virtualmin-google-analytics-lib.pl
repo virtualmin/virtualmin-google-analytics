@@ -118,13 +118,16 @@ foreach my $p (@ports) {
 	next if (!$virt);
 	&lock_file($virt->{'file'});
 	local @psv = &apache::find_directive("PerlSetVar", $vconf);
+	local @oldpsv = @psv;
 	@psv = grep { !/^\Q$name\E/ } @psv;
 	if ($account) {
 		push(@psv, "$name $account");
 		}
-	&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
+	if (scalar(@psv) || scalar(@oldpsv)) {
+		&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
+		&flush_file_lines($virt->{'file'});
+		}
 	&unlock_file($virt->{'file'});
-	&flush_file_lines($virt->{'file'});
 	$done++;
 	}
 if ($done) {
@@ -151,54 +154,6 @@ return 1;
 }
 
 1;
-
-
-# save_perlsetvar(&domain, account, name)
-sub save_perlsetvar
-{
-local ($d, $account, $name) = @_;
-&virtual_server::require_apache();
-local $conf = &apache::get_config();
-local @ports = ( $d->{'web_port'} );
-push(@ports, $d->{'web_sslport'}) if ($d->{'ssl'});
-local $done = 0;
-foreach my $p (@ports) {
-	local ($virt, $vconf) =
-		&virtual_server::get_apache_virtual($d->{'dom'}, $p);
-	next if (!$virt);
-	&lock_file($virt->{'file'});
-	local @psv = &apache::find_directive("PerlSetVar", $vconf);
-	@psv = grep { !/^\Q$name\E/ } @psv;
-	if ($account) {
-		push(@psv, "$name $account");
-		}
-	&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
-	&unlock_file($virt->{'file'});
-	&flush_file_lines($virt->{'file'});
-	$done++;
-	}
-if ($done) {
-	&virtual_server::register_post_action(\&virtual_server::restart_apache);
-	}
-return $done;
-}
-
-# has_analytics_directives(&domain)
-# Checks if some domain has the mod_perl directives needed for analytics
-# integration (PerlOutputFilterHandler and PerlRequire)
-sub has_analytics_directives
-{
-local ($d) = @_;
-local ($virt, $vconf) = &virtual_server::get_apache_virtual($d->{'dom'},
-							    $d->{'web_port'});
-local @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
-@pof = grep { $_ eq "Virtualmin::GoogleAnalytics" } @pof;
-return 0 if (!@pof);
-local @prq = &apache::find_directive("PerlRequire", $vconf);
-@prq = grep { $_ eq "$module_config_directory/apachemod.pl" } @prq;
-return 0 if (!@prq);
-return 1;
-}
 
 1;
 
