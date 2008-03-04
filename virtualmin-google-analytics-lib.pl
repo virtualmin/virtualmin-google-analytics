@@ -107,6 +107,8 @@ return &save_perlsetvar($d, $account, "ClickyID");
 sub save_perlsetvar
 {
 local ($d, $account, $name) = @_;
+&virtual_server::obtain_lock_web($d)
+        if (defined(&virtual_server::obtain_lock_web));
 &virtual_server::require_apache();
 local $conf = &apache::get_config();
 local @ports = ( $d->{'web_port'} );
@@ -116,7 +118,6 @@ foreach my $p (@ports) {
 	local ($virt, $vconf) =
 		&virtual_server::get_apache_virtual($d->{'dom'}, $p);
 	next if (!$virt);
-	&lock_file($virt->{'file'});
 	local @psv = &apache::find_directive("PerlSetVar", $vconf);
 	local @oldpsv = @psv;
 	@psv = grep { !/^\Q$name\E/ } @psv;
@@ -127,9 +128,10 @@ foreach my $p (@ports) {
 		&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
 		&flush_file_lines($virt->{'file'});
 		}
-	&unlock_file($virt->{'file'});
 	$done++;
 	}
+&virtual_server::release_lock_web($d)
+        if (defined(&virtual_server::release_lock_web));
 if ($done) {
 	&virtual_server::register_post_action(\&virtual_server::restart_apache);
 	}
