@@ -20,6 +20,7 @@ foreach $s (@tracking_services) {
 	&{$s->[2]}($d, $in{$s->[0].'_def'} ? undef : $in{$s->[0]});
 	}
 &virtual_server::run_post_actions();
+&webmin_log("save", undef, $d->{'dom'});
 
 if ($in{'virtualmin'}) {
 	# Go to Virtualmin post-save page
