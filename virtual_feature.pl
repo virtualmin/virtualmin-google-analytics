@@ -118,7 +118,6 @@ foreach my $p (@ports) {
         if (defined(&virtual_server::release_lock_web));
 if ($done) {
 	&virtual_server::register_post_action(\&virtual_server::restart_apache);
-	return 1;
 	}
 else {
 	&$virtual_server::second_print($text{'feat_novirt'});
