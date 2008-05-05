@@ -16,7 +16,7 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 	[ 'clicky', \&get_clicky_account, \&save_clicky_account,
 	  '[0-9]+' ],
 	[ 'piwik', \&get_piwik_account, \&save_piwik_account,
-	  '(http|https):\/\/\S+' ],
+	  '[0-9]+' ],
 	);
 
 # get_analytics_account(&domain)
@@ -56,12 +56,12 @@ return &get_perlsetvar($d, "ClickyID");
 }
 
 # get_piwik_account(&domain)
-# Returns the Clicky URL for a virtual server, by looking
+# Returns the Piwik site ID for a virtual server, by looking
 # at the server's PerlSetVar directive.
 sub get_piwik_account
 {
 local ($d) = @_;
-return &get_perlsetvar($d, "PiwikURL");
+return &get_perlsetvar($d, "PiwikID");
 }
 
 # get_perlsetvar(&domain, name)
@@ -115,11 +115,11 @@ return &save_perlsetvar($d, $account, "ClickyID");
 }
 
 # save_piwik_account(&domain, account)
-# Adds directives for the Clicky URL
+# Adds directives for the Piwik site ID
 sub save_piwik_account
 {
 local ($d, $account) = @_;
-return &save_perlsetvar($d, $account, "PiwikURL");
+return &save_perlsetvar($d, $account, "PiwikID");
 }
 
 # save_perlsetvar(&domain, account, name)
@@ -172,6 +172,27 @@ local @prq = &apache::find_directive("PerlRequire", $vconf);
 @prq = grep { $_ eq "$module_config_directory/apachemod.pl" } @prq;
 return 0 if (!@prq);
 return 1;
+}
+
+# get_piwik_default_url(&domain)
+# Returns the default piwik URL. This is keyed off the top-level domain
+sub get_piwik_default_url
+{
+local ($d) = @_;
+local $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
+			       : $d;
+return $parent->{'piwik_url'};
+}
+
+# save_piwik_default_url(&domain, url)
+# Set the piwik default base URL
+sub save_piwik_default_url
+{
+local ($d, $url) = @_;
+local $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
+			       : $d;
+$parent->{'piwik_url'} = $url;
+&virtual_server::save_domain($parent);
 }
 
 1;

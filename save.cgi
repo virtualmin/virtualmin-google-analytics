@@ -19,6 +19,17 @@ foreach $s (@tracking_services) {
 foreach $s (@tracking_services) {
 	&{$s->[2]}($d, $in{$s->[0].'_def'} ? undef : $in{$s->[0]});
 	}
+if (!$in{'piwik_def'} && $in{'piwikurl_def'}) {
+	&error($text{'save_epiwikurl2'});
+	}
+
+# Save Piwik base URL
+if (!$in{'piwikurl_def'}) {
+	$in{'piwikurl'} =~ /^(http|https):\/\/(\S+)$/ ||
+		&error($text{'save_epiwikurl'});
+	&save_perlsetvar($d, $in{'piwikurl'}, "PiwikURL");
+	}
+
 &virtual_server::run_post_actions();
 &webmin_log("save", undef, $d->{'dom'});
 

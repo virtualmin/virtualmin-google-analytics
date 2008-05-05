@@ -24,6 +24,17 @@ foreach $s (@tracking_services) {
 				    $text{'edit_dis'}, $text{'edit_ena'}));
 	}
 
+# Show base URL for Piwik
+$vurl = &get_perlsetvar($d, "PiwikURL");
+if ($vurl) {
+	$urlin = &ui_textbox("piwikurl", $vurl, 40);
+	}
+else {
+	$urlin = &ui_opt_textbox("piwikurl", &get_piwik_default_url($d), 40,
+				 $text{'edit_notset'});
+	}
+print &ui_table_row(&hlink($text{'edit_piwikurl'}, 'piwikurl'), $urlin);
+
 print &ui_table_end();
 print &ui_form_end([ [ "save", $text{'save'} ] ]);
 
