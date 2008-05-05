@@ -24,7 +24,8 @@ sub handler {
     my $mybloglog = $f->r->dir_config("MyBlogLogID");
     my $quantcast = $f->r->dir_config("QuantcastID");
     my $clicky = $f->r->dir_config("ClickyID");
-    if (!$account && !$mybloglog && !$quantcast && !$clicky) {
+    my $piwik = $f->r->dir_config("PiwikURL");
+    if (!$account && !$mybloglog && !$quantcast && !$clicky && !$piwik) {
       # No account set yet, so nothing to do!
       return Apache2::Const::DECLINED;
     }
@@ -54,6 +55,10 @@ sub handler {
     }
     if ($clicky) {
       $addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
+    }
+    if ($piwik) {
+      $addscript .= "<!-- Piwik --><a href=\"http://piwik.org\" title=\"Web analytics\" onclick=\"window.open(this.href);return(false);\"><script language=\"javascript\" src=\"$piwik/piwik.js\" type=\"text/javascript\"></script><script type=\"text/javascript\"><!-- piwik_action_name = ''; piwik_idsite = 1; piwik_url = '$piwik/piwik.php'; piwik_log(piwik_action_name, piwik_idsite, piwik_url); //--> </script><object> <noscript><p>Web analytics <img src=\"$piwik/piwik.php\" style=\"border:0\" alt=\"piwik\"/></p> </noscript></object></a>";
+<!-- /Piwik -->
     }
   
     # Clear the content length, as we modify it

@@ -15,6 +15,8 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 	  '[A-Za-z0-9\\-]+' ],
 	[ 'clicky', \&get_clicky_account, \&save_clicky_account,
 	  '[0-9]+' ],
+	[ 'piwik', \&get_piwik_account, \&save_piwik_account,
+	  '(http|https):\/\/\S+' ],
 	);
 
 # get_analytics_account(&domain)
@@ -51,6 +53,15 @@ sub get_clicky_account
 {
 local ($d) = @_;
 return &get_perlsetvar($d, "ClickyID");
+}
+
+# get_piwik_account(&domain)
+# Returns the Clicky URL for a virtual server, by looking
+# at the server's PerlSetVar directive.
+sub get_piwik_account
+{
+local ($d) = @_;
+return &get_perlsetvar($d, "PiwikURL");
 }
 
 # get_perlsetvar(&domain, name)
@@ -101,6 +112,14 @@ sub save_clicky_account
 {
 local ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "ClickyID");
+}
+
+# save_piwik_account(&domain, account)
+# Adds directives for the Clicky URL
+sub save_piwik_account
+{
+local ($d, $account) = @_;
+return &save_perlsetvar($d, $account, "PiwikURL");
 }
 
 # save_perlsetvar(&domain, account, name)
