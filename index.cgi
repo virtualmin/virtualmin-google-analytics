@@ -30,7 +30,7 @@ else {
 			foreach $s (@tracking_services) {
 				$a = &{$s->[1]}($d);
 				if ($a) {
-					push(@account,
+					push(@accounts,
 					     &text('index_'.$a->[0], $a));
 					}
 				}
