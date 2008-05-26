@@ -217,7 +217,7 @@ local ($d) = @_;
 return ( { 'mod' => $module_name,
 	   'desc' => $text{'links_link'},
 	   'page' => 'edit.cgi?dom='.&urlize($d->{'id'})."&virtualmin=1",
-	   'cat' => 'services',
+	   'cat' => 'logs',
          } );
 }
 
