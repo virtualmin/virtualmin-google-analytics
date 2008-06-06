@@ -1,5 +1,5 @@
 desc=Virtualmin Analytics
 category=servers
 depends=virtual-server
-version=1.8
+version=1.9
 desc_nl=Virtualmin Analytics

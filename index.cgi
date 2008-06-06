@@ -4,7 +4,7 @@
 require './virtualmin-google-analytics-lib.pl';
 &ui_print_header(undef, $text{'index_title'}, "", undef, 1, 1);
 
-@doms = grep { &virtual_server::can_edit_domain($_) }
+@doms = grep { &virtual_server::can_edit_domain($_) && !$_->{'alias'} }
 	     &virtual_server::list_domains();
 if (!@doms) {
 	# User has no domains
@@ -18,10 +18,8 @@ elsif (&indexof($module_name, @virtual_server::confplugins) < 0) {
 		"../virtual-server/$cgi"),"</b><p>\n";
 	}
 else {
-	print $text{'index_desc'},"<p>\n";
-	print &ui_columns_start([ $text{'index_dom'},
-				  $text{'index_status'},
-				  $text{'index_actions'} ]);
+	# Make table rows
+	@table = ( );
 	foreach $d (@doms) {
 		$has = &has_analytics_directives($d);
 		@accounts = ( );
@@ -31,7 +29,7 @@ else {
 				$a = &{$s->[1]}($d);
 				if ($a) {
 					push(@accounts,
-					     &text('index_'.$a->[0], $a));
+					     &text('index_'.$s->[0], $a));
 					}
 				}
 			}
@@ -40,14 +38,22 @@ else {
 			       "$text{'index_edit'}</a>") if ($has);
 		my $prog = &virtual_server::can_config_domain($d) ?
 				"edit_domain.cgi" : "view_domain.cgi";
-		print &ui_columns_row([
-			"<a href='../virtual-server/$prog?dom=$d->{'id'}'>$d->{'dom'}</a>",
+		my $dname = defined(&virtual_server::show_domain_name) ?
+			&virtual_server::show_domain_name($d) : $d->{'dom'};
+		push(@table, [
+			"<a href='../virtual-server/$prog?dom=$d->{'id'}'>".
+			  "$dname</a>",
 			@accounts ? join("<br>", @accounts) :
-			$has ? $text{'index_has'} : $text{'index_dis'},
+			  $has ? $text{'index_has'} : $text{'index_dis'},
 			&ui_links_row(\@actions)
 			]);
 		}
-	print &ui_columns_end();
+
+	# Render the table
+	print $text{'index_desc'},"<p>\n";
+	print &ui_columns_table(
+	  [ $text{'index_dom'}, $text{'index_status'}, $text{'index_actions'} ],
+	  100, \@table, undef, 1);
 	}
 
 &ui_print_footer("/", $text{'index'});
