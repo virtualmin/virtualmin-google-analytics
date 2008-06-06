@@ -14,7 +14,9 @@ print &ui_hidden("virtualmin", $in{'virtualmin'}),"\n";
 print &ui_hidden("dom", $in{'dom'}),"\n";
 print &ui_table_start($text{'edit_header'}, undef, 2);
 
-print &ui_table_row($text{'edit_dom'}, "<tt>$d->{'dom'}</tt>");
+$dname = defined(&virtual_server::show_domain_name) ?
+	&virtual_server::show_domain_name($d) : $d->{'dom'};
+print &ui_table_row($text{'edit_dom'}, "<tt>$dname</tt>");
 
 # Show ID input for each account
 foreach $s (@tracking_services) {
