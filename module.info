@@ -3,3 +3,4 @@ category=servers
 depends=virtual-server 1.420
 version=1.9
 desc_nl=Virtualmin Analytics
+feedback=jcameron@webmin.com
