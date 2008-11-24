@@ -37,9 +37,9 @@ sub handler {
       return Apache2::Const::DECLINED;
     }
 
-    # Do nothing if this is Javascript
+    # Do nothing if this is Javascript or looks like an image
     my $fn = $f->r->filename();
-    if ($fn && $fn =~ /\.js/i) {
+    if ($fn && $fn =~ /\.(js|jpg|png|gif|jpeg)$/i) {
       return Apache2::Const::DECLINED;
     }
 
@@ -62,19 +62,21 @@ sub handler {
 <!-- /Piwik -->
     }
   
-    # Clear the content length, as we modify it
-    unless ($f->ctx) {
-	$f->r->headers_out->unset('Content-Length');
-        $f->ctx(1);
-    }
-
+    my $added = 0;
     while ($f->read(my $buffer, BUFF_LEN)) {
 	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i) {
 	    $buffer = $1.$addscript.$2.$3;
+            $added = 1;
 	}
         $f->print($buffer);
     }
     #$f->r->headers_out->do(sub { $f->print("$_[0]: $_[1]\n") });
+
+    # Clear the content length, as we modify it
+    if ($added && !$f->ctx) {
+	$f->r->headers_out->unset('Content-Length');
+        $f->ctx(1);
+    }
 
     return Apache2::Const::OK;
 }
