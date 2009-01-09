@@ -170,14 +170,18 @@ foreach my $p (@ports) {
 	# Remove PerlRequire and PerlOutputFilterHandler
 	&lock_file($virt->{'file'});
 	local @prq = &apache::find_directive("PerlRequire", $vconf);
-	@prq = grep { $_ ne $apachemod_lib_cmd } @prq;
-	&apache::save_directive("PerlRequire", \@prq, $vconf, $conf);
+	local @newprq = grep { $_ ne $apachemod_lib_cmd } @prq;
+	&apache::save_directive("PerlRequire", \@newprq,
+				$vconf, $conf);
 	local @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
-	@pof = grep { $_ ne "Virtualmin::GoogleAnalytics" } @pof;
-	&apache::save_directive("PerlOutputFilterHandler", \@pof, $vconf,$conf);
+	local @newpof = grep { $_ ne "Virtualmin::GoogleAnalytics" } @pof;
+	&apache::save_directive("PerlOutputFilterHandler", \@newpof,
+				$vconf, $conf);
 
+	if (@prq || @pof) {
+		&flush_file_lines($virt->{'file'});
+		}
 	&unlock_file($virt->{'file'});
-	&flush_file_lines($virt->{'file'});
 	$done++;
 	}
 
