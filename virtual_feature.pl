@@ -37,6 +37,7 @@ sub feature_check
 &virtual_server::require_apache();
 return $text{'feat_noperl'} if (!$apache::httpd_modules{'mod_perl'});
 return $text{'feat_noapache'} if ($apache::httpd_modules{'core'} < 2);
+return $text{'feat_nodeflate'} if ($apache::httpd_modules{'mod_deflate'});
 eval "use Apache2::Filter";
 return &text('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
 return undef;
@@ -47,7 +48,22 @@ return undef;
 # or an error message if not
 sub feature_depends
 {
-return $text{'feat_edepweb'} if (!$_[0]->{'web'});
+local ($d) = @_;
+return $text{'feat_edepweb'} if (!$d->{'web'});
+if (defined(&virtual_server::list_domain_php_inis) &&
+    &foreign_check("phpini")) {
+	&foreign_require("phpini", "phpini-lib.pl");
+	foreach my $ini (&virtual_server::list_domain_php_inis($d)) {
+		local $pconf = &phpini::get_config($ini->[1]);
+		local $comp = &phpini::find_value(
+			"zlib.output_compression", $pconf);
+		if (lc($comp) =~ /on|true|yes/) {
+			return &text('feat_ezlib',
+				     "<tt>zlib.output_compression</tt>",
+				     "<tt>$ini->[1]</tt>");
+			}
+		}
+	}
 return undef;
 }
 
