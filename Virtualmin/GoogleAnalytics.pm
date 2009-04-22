@@ -63,20 +63,19 @@ sub handler {
     }
   
     my $added = 0;
-    while ($f->read(my $buffer, BUFF_LEN)) {
+    while ($f->read(my $buffer, 8000)) {
 	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i) {
 	    $buffer = $1.$addscript.$2.$3;
             $added = 1;
+	    if (!$f->ctx) {
+		# Clear the content length, as we modify it
+		$f->r->headers_out->unset('Content-Length');
+		$f->ctx(1);
+	    }
 	}
         $f->print($buffer);
     }
     #$f->r->headers_out->do(sub { $f->print("$_[0]: $_[1]\n") });
-
-    # Clear the content length, as we modify it
-    if ($added && !$f->ctx) {
-	$f->r->headers_out->unset('Content-Length');
-        $f->ctx(1);
-    }
 
     return Apache2::Const::OK;
 }
