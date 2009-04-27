@@ -63,7 +63,7 @@ sub handler {
     }
   
     my $added = 0;
-    while ($f->read(my $buffer, 8000)) {
+    while ($f->read(my $buffer, 64000)) {
 	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i) {
 	    $buffer = $1.$addscript.$2.$3;
             $added = 1;
