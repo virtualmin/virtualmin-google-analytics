@@ -24,9 +24,11 @@ sub handler {
     my $mybloglog = $f->r->dir_config("MyBlogLogID");
     my $quantcast = $f->r->dir_config("QuantcastID");
     my $clicky = $f->r->dir_config("ClickyID");
+    my $woopra = $f->r->dir_config("WoopraID");
     my $piwik = $f->r->dir_config("PiwikID");
     my $piwik_url = $f->r->dir_config("PiwikURL");
-    if (!$account && !$mybloglog && !$quantcast && !$clicky && !$piwik) {
+    if (!$account && !$mybloglog && !$quantcast && !$clicky &&
+	!$woopra && !$piwik) {
       # No account set yet, so nothing to do!
       return Apache2::Const::DECLINED;
     }
@@ -56,6 +58,9 @@ sub handler {
     }
     if ($clicky) {
       $addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
+    }
+    if ($woopra) {
+      $addscript .= "<script type=\"text/javascript\">var _wh = ((document.location.protocol=='https:') ? \"https://sec1.woopra.com\" : \"http://static.woopra.com\"); document.write(unescape(\"%3Cscript src='\" + _wh + \"/js/woopra.js' type='text/javascript'%3E%3C/script%3E\"));</script>";
     }
     if ($piwik) {
       $addscript .= "<a href=\"http://piwik.org\" title=\"Web analytics\" onclick=\"window.open(this.href);return(false);\"><script language=\"javascript\" src=\"$piwik_url/piwik.js\" type=\"text/javascript\"></script><script type=\"text/javascript\">piwik_action_name = ''; piwik_idsite = $piwik; piwik_url = '$piwik_url/piwik.php'; piwik_log(piwik_action_name, piwik_idsite, piwik_url);</script><object> <noscript><p>Web analytics <img src=\"$piwik_url/piwik.php\" style=\"border:0\" alt=\"piwik\"/></p> </noscript></object></a>";

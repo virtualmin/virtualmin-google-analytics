@@ -10,3 +10,5 @@ Fixed typo that prevents missing mod_perl 2 error from appearing properly.
 Added support for the Clicky web analytics service.
 ---- Changes since 2.1 ----
 Added detection for Apache's mod_deflate and PHP zlib compression, which break insertion of analytics directives into HTML.
+---- Changes since 2.3 ----
+Added support for Woopra analytics.

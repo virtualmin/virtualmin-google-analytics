@@ -19,6 +19,8 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 	  '[A-Za-z0-9\\-]+' ],
 	[ 'clicky', \&get_clicky_account, \&save_clicky_account,
 	  '[0-9]+' ],
+	[ 'woopra', \&get_woopra_account, \&save_woopra_account,
+	  '[A-Za-z0-9\\-]+' ],
 	[ 'piwik', \&get_piwik_account, \&save_piwik_account,
 	  '[0-9]+' ],
 	);
@@ -57,6 +59,15 @@ sub get_clicky_account
 {
 local ($d) = @_;
 return &get_perlsetvar($d, "ClickyID");
+}
+
+# get_woopra_account(&domain)
+# Returns the Woopra account name for a virtual server, by looking
+# at the server's PerlSetVar directive. Not actually used in the JS though.
+sub get_woopra_account
+{
+local ($d) = @_;
+return &get_perlsetvar($d, "WoopraID");
 }
 
 # get_piwik_account(&domain)
@@ -116,6 +127,14 @@ sub save_clicky_account
 {
 local ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "ClickyID");
+}
+
+# save_woopra_account(&domain, account)
+# Adds directives for the Woopra account name
+sub save_woopra_account
+{
+local ($d, $account) = @_;
+return &save_perlsetvar($d, $account, "WoopraID");
 }
 
 # save_piwik_account(&domain, account)
