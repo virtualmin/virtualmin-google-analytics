@@ -125,6 +125,13 @@ foreach my $p (@ports) {
 	push(@pof, "Virtualmin::GoogleAnalytics");
 	&apache::save_directive("PerlOutputFilterHandler", \@pof, $vconf,$conf);
 
+	# Add PerlSetVar SSL
+	if ($p == $d->{'web_sslport'}) {
+		local @psv = &apache::find_directive("PerlSetVar", $vconf);
+		@psv = &unique(@psv, "SSL 1");
+		&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
+		}
+
 	&unlock_file($virt->{'file'});
 	&flush_file_lines($virt->{'file'});
 	$done++;

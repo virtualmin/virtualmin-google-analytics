@@ -27,6 +27,7 @@ sub handler {
     my $woopra = $f->r->dir_config("WoopraID");
     my $piwik = $f->r->dir_config("PiwikID");
     my $piwik_url = $f->r->dir_config("PiwikURL");
+    my $ssl =  $f->r->dir_config("SSL");
     if (!$account && !$mybloglog && !$quantcast && !$clicky &&
 	!$woopra && !$piwik) {
       # No account set yet, so nothing to do!
@@ -54,7 +55,9 @@ sub handler {
       $addscript .= "<script type=\"text/javascript\" src=\"http://track3.mybloglog.com/js/jsserv.php?mblID=$mybloglog\"></script>";
     }
     if ($quantcast) {
-      $addscript .= "<script type=\"text/javascript\" src=\"http://edge.quantserve.com/quant.js\"></script><script type=\"text/javascript\">_qacct=\"$quantcast\";quantserve();</script><noscript><img src=\"http://pixel.quantserve.com/pixel/$quantcast.gif\" style=\"display: none\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></noscript>";
+      my $base = $ssl ? "https://secure.quantserve.com"
+		      : "http://edge.quantserve.com";
+      $addscript .= "<script type=\"text/javascript\" src=\"$base/quant.js\"></script><script type=\"text/javascript\">_qacct=\"$quantcast\";quantserve();</script><noscript><img src=\"$base/pixel/$quantcast.gif\" style=\"display: none\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></noscript>";
     }
     if ($clicky) {
       $addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
@@ -80,7 +83,6 @@ sub handler {
 	}
         $f->print($buffer);
     }
-    #$f->r->headers_out->do(sub { $f->print("$_[0]: $_[1]\n") });
 
     return Apache2::Const::OK;
 }
