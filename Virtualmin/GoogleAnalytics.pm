@@ -66,8 +66,10 @@ sub handler {
       $addscript .= "<script type=\"text/javascript\">var _wh = ((document.location.protocol=='https:') ? \"https://sec1.woopra.com\" : \"http://static.woopra.com\"); document.write(unescape(\"%3Cscript src='\" + _wh + \"/js/woopra.js' type='text/javascript'%3E%3C/script%3E\"));</script>";
     }
     if ($piwik) {
-      $addscript .= "<a href=\"http://piwik.org\" title=\"Web analytics\" onclick=\"window.open(this.href);return(false);\"><script language=\"javascript\" src=\"$piwik_url/piwik.js\" type=\"text/javascript\"></script><script type=\"text/javascript\">piwik_action_name = ''; piwik_idsite = $piwik; piwik_url = '$piwik_url/piwik.php'; piwik_log(piwik_action_name, piwik_idsite, piwik_url);</script><object> <noscript><p>Web analytics <img src=\"$piwik_url/piwik.php\" style=\"border:0\" alt=\"piwik\"/></p> </noscript></object></a>";
-<!-- /Piwik -->
+      $piwik_url .= "/" if ($piwik_url !~ /\/$/);
+      my $piwik_sslurl = $piwik_url;
+      $piwik_sslurl =~ s/^http:/https:/;
+      $addscript .= "<script type=\"text/javascript\">var pkBaseURL = ((\"https:\" == document.location.protocol) ? \"$piwik_sslurl\" : \"$piwik_url\"); document.write(unescape(\"%3Cscript src='\" + pkBaseURL + \"piwik.js' type='text/javascript'%3E%3C/script%3E\"));</script><script type=\"text/javascript\">try { var piwikTracker = Piwik.getTracker(pkBaseURL + \"piwik.php\", $piwik); piwikTracker.trackPageView(); piwikTracker.enableLinkTracking(); } catch( err ) {}</script>";
     }
   
     my $added = 0;

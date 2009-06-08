@@ -13,3 +13,4 @@ Added detection for Apache's mod_deflate and PHP zlib compression, which break i
 ---- Changes since 2.3 ----
 Added support for Woopra analytics.
 Change URL for Quantcast when in SSL mode.
+Fixed Javascript for PiWik to use their new suggested code.
