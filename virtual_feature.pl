@@ -43,15 +43,16 @@ return &text('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
 return undef;
 }
 
-# feature_depends(&domain)
+# feature_depends(&domain, [&old-domain])
 # Returns undef if all pre-requisite features for this domain are enabled,
 # or an error message if not
 sub feature_depends
 {
-local ($d) = @_;
+local ($d, $oldd) = @_;
 return $text{'feat_edepweb'} if (!$d->{'web'});
 if (defined(&virtual_server::list_domain_php_inis) &&
-    &foreign_check("phpini")) {
+    &foreign_check("phpini") &&
+    (!$oldd || !$oldd->{$module_name})) {
 	&foreign_require("phpini", "phpini-lib.pl");
 	foreach my $ini (&virtual_server::list_domain_php_inis($d)) {
 		local $pconf = &phpini::get_config($ini->[1]);
