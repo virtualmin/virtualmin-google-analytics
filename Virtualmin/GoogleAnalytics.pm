@@ -42,7 +42,7 @@ sub handler {
 
     # Do nothing if this is Javascript or looks like an image
     my $fn = $f->r->filename();
-    if ($fn && $fn =~ /\.(js|jpg|png|gif|jpeg|zip|tar|gz|bz2|jar|rev|doc|xls|ppt)$/i) {
+    if ($fn && $fn =~ /\.(js|jpg|png|gif|jpeg|zip|tar|gz|bz2|jar|rev|doc|xls|ppt|dd)$/i) {
       return Apache2::Const::DECLINED;
     }
 
