@@ -47,38 +47,50 @@ sub handler {
     }
 
     # Work out the script we want to add
-    my $addscript;
+    my ($start_addscript, $end_addscript);
     if ($account) {
-      $addscript .= "<script type=\"text/javascript\">var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\"); document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\")); </script> <script type=\"text/javascript\"> try { var pageTracker = _gat._getTracker(\"$account\"); pageTracker._trackPageview(); } catch(err) { }</script>";
+      $start_addscript .= "<script type=\"text/javascript\">var _gaq = _gaq || []; _gaq.push(['_setAccount', '$account']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })();</script>";
     }
     if ($mybloglog) {
-      $addscript .= "<script type=\"text/javascript\" src=\"http://track3.mybloglog.com/js/jsserv.php?mblID=$mybloglog\"></script>";
+      $end_addscript .= "<script type=\"text/javascript\" src=\"http://track3.mybloglog.com/js/jsserv.php?mblID=$mybloglog\"></script>";
     }
     if ($quantcast) {
       my $base = $ssl ? "https://secure.quantserve.com"
 		      : "http://edge.quantserve.com";
-      $addscript .= "<script type=\"text/javascript\" src=\"$base/quant.js\"></script><script type=\"text/javascript\">_qacct=\"$quantcast\";quantserve();</script><noscript><img src=\"$base/pixel/$quantcast.gif\" style=\"display: none\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></noscript>";
+      $end_addscript .= "<script type=\"text/javascript\" src=\"$base/quant.js\"></script><script type=\"text/javascript\">_qacct=\"$quantcast\";quantserve();</script><noscript><img src=\"$base/pixel/$quantcast.gif\" style=\"display: none\" height=\"1\" width=\"1\" alt=\"Quantcast\"/></noscript>";
     }
     if ($clicky) {
-      $addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
+      $end_addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
     }
     if ($woopra) {
-      $addscript .= "<script type=\"text/javascript\">var _wh = ((document.location.protocol=='https:') ? \"https://sec1.woopra.com\" : \"http://static.woopra.com\"); document.write(unescape(\"%3Cscript src='\" + _wh + \"/js/woopra.js' type='text/javascript'%3E%3C/script%3E\"));</script>";
+      $end_addscript .= "<script type=\"text/javascript\">var _wh = ((document.location.protocol=='https:') ? \"https://sec1.woopra.com\" : \"http://static.woopra.com\"); document.write(unescape(\"%3Cscript src='\" + _wh + \"/js/woopra.js' type='text/javascript'%3E%3C/script%3E\"));</script>";
     }
     if ($piwik) {
       $piwik_url .= "/" if ($piwik_url !~ /\/$/);
       my $piwik_sslurl = $piwik_url;
       $piwik_sslurl =~ s/^http:/https:/;
-      $addscript .= "<script type=\"text/javascript\">var pkBaseURL = ((\"https:\" == document.location.protocol) ? \"$piwik_sslurl\" : \"$piwik_url\"); document.write(unescape(\"%3Cscript src='\" + pkBaseURL + \"piwik.js' type='text/javascript'%3E%3C/script%3E\"));</script><script type=\"text/javascript\">try { var piwikTracker = Piwik.getTracker(pkBaseURL + \"piwik.php\", $piwik); piwikTracker.trackPageView(); piwikTracker.enableLinkTracking(); } catch( err ) {}</script>";
+      $end_addscript .= "<script type=\"text/javascript\">var pkBaseURL = ((\"https:\" == document.location.protocol) ? \"$piwik_sslurl\" : \"$piwik_url\"); document.write(unescape(\"%3Cscript src='\" + pkBaseURL + \"piwik.js' type='text/javascript'%3E%3C/script%3E\"));</script><script type=\"text/javascript\">try { var piwikTracker = Piwik.getTracker(pkBaseURL + \"piwik.php\", $piwik); piwikTracker.trackPageView(); piwikTracker.enableLinkTracking(); } catch( err ) {}</script>";
     }
   
     my $added = 0;
     while ($f->read(my $buffer, 64000)) {
-	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i) {
-	    $buffer = $1.$addscript.$2.$3;
+	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i &&
+	    $end_addscript) {
+	    # Adding just before closing body
+	    $buffer = $1.$end_addscript.$2.$3;
             $added = 1;
 	    if (!$f->ctx) {
 		# Clear the content length, as we modify it
+		$f->r->headers_out->unset('Content-Length');
+		$f->ctx(1);
+	    }
+	}
+	if ($buffer =~ /^([\000-\377]*)(<body[^>]*>)([\000-\377]*)$/i &&
+	    $start_addscript) {
+	    # Adding just after opening body
+	    $buffer = $1.$2.$start_addscript.$3;
+            $added = 1;
+	    if (!$f->ctx) {
 		$f->r->headers_out->unset('Content-Length');
 		$f->ctx(1);
 	    }

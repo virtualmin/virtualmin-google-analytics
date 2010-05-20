@@ -14,3 +14,5 @@ Added detection for Apache's mod_deflate and PHP zlib compression, which break i
 Added support for Woopra analytics.
 Change URL for Quantcast when in SSL mode.
 Fixed Javascript for PiWik to use their new suggested code.
+---- Changes since 2.4 ----
+Moved the inserted Google Analytics Javascript to just after the <body> tag, and switched to their new asynchronous code.
