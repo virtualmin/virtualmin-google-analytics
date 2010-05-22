@@ -74,10 +74,10 @@ sub handler {
   
     my $added = 0;
     while ($f->read(my $buffer, 64000)) {
-	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i &&
-	    $end_addscript) {
-	    # Adding just before closing body
-	    $buffer = $1.$end_addscript.$2.$3;
+	if ($buffer =~ /^([\000-\377]*)(<\/head[^>]*>)([\000-\377]*)$/i &&
+	    $start_addscript) {
+	    # Adding just before closing head
+	    $buffer = $1.$start_addscript.$2.$3;
             $added = 1;
 	    if (!$f->ctx) {
 		# Clear the content length, as we modify it
@@ -85,12 +85,13 @@ sub handler {
 		$f->ctx(1);
 	    }
 	}
-	if ($buffer =~ /^([\000-\377]*)(<body[^>]*>)([\000-\377]*)$/i &&
-	    $start_addscript) {
-	    # Adding just after opening body
-	    $buffer = $1.$2.$start_addscript.$3;
+	if ($buffer =~ /^([\000-\377]*)(<\/body[^>]*>)([\000-\377]*)$/i &&
+	    $end_addscript) {
+	    # Adding just before closing body
+	    $buffer = $1.$end_addscript.$2.$3;
             $added = 1;
 	    if (!$f->ctx) {
+		# Clear the content length, as we modify it
 		$f->r->headers_out->unset('Content-Length');
 		$f->ctx(1);
 	    }
