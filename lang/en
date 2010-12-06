@@ -59,3 +59,4 @@ save_epiwikurl2=Piwik analytics cannot be enabled unless a base URL is set
 links_link=Analytics Accounts
 
 log_save=Updated accounts for $1
+__norefs=1
