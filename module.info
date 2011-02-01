@@ -1,6 +1,6 @@
 desc=Virtualmin Analytics
 category=servers
 depends=virtual-server 1.420
-version=2.4
+version=2.5
 desc_nl=Virtualmin Analytics
 feedback=jcameron@webmin.com
