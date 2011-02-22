@@ -63,7 +63,7 @@ sub handler {
       $end_addscript .= "<script src=\"http://static.getclicky.com/$clicky.js\" type=\"text/javascript\"></script><noscript><p><img alt=\"Clicky\" src=\"http://static.getclicky.com/${clicky}ns.gif\"/></p></noscript>";
     }
     if ($woopra) {
-      $end_addscript .= "<script type=\"text/javascript\">(function(){ var wsc=document.createElement('script'); wsc.src=document.location.protocol+'//static.woopra.com/js/woopra.js'; wsc.async=true; var ssc = document.getElementsByTagName('script')[0]; ssc.parentNode.insertBefore(wsc, ssc); })();</script>";
+      $start_addscript .= "<script type=\"text/javascript\">(function(){ var wsc=document.createElement('script'); wsc.type='text/javascript'; wsc.src=document.location.protocol+'//static.woopra.com/js/woopra.js'; wsc.async=true; var ssc = document.getElementsByTagName('script')[0]; ssc.parentNode.insertBefore(wsc, ssc); })();</script>";
     }
     if ($piwik) {
       $piwik_url .= "/" if ($piwik_url !~ /\/$/);
