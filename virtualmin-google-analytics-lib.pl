@@ -9,8 +9,6 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 @tracking_services = (
 	[ 'account', \&get_analytics_account, \&save_analytics_account,
 	  '[A-Za-z0-9\\-]+' ],
-	[ 'mybloglog', \&get_mybloglog_account, \&save_mybloglog_account,
-	  '\\d+' ],
 	[ 'quantcast', \&get_quantcast_account, \&save_quantcast_account,
 	  '[A-Za-z0-9\\-]+' ],
 	[ 'clicky', \&get_clicky_account, \&save_clicky_account,
@@ -28,15 +26,6 @@ sub get_analytics_account
 {
 local ($d) = @_;
 return &get_perlsetvar($d, "AnalyticsID");
-}
-
-# get_mybloglog_account(&domain)
-# Returns the MyBlogLog account ID for a virtual server, by looking
-# at the server's PerlSetVar directive.
-sub get_mybloglog_account
-{
-local ($d) = @_;
-return &get_perlsetvar($d, "MyBlogLogID");
 }
 
 # get_quantcast_account(&domain)
@@ -99,14 +88,6 @@ sub save_analytics_account
 {
 local ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "AnalyticsID");
-}
-
-# save_mybloglog_account(&domain, account)
-# Adds directives for the MyBlogLog account ID
-sub save_mybloglog_account
-{
-local ($d, $account) = @_;
-return &save_perlsetvar($d, $account, "MyBlogLogID");
 }
 
 # save_quantcast_account(&domain, account)
