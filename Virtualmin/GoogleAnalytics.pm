@@ -34,16 +34,24 @@ sub handler {
       return Apache2::Const::DECLINED;
     }
 
+    # Exit fast if a previous call detected non-HTML
+    if ($f->ctx == 2) {
+      return Apache2::Const::DECLINED;
+    }
+
     # Do nothing if this isn't HTML
-    my $ct = $f->r->headers_out->get('Content-Type');
+    my $ct = $f->r->headers_out->get('Content-Type') ||
+	     $f->r->content_type();
     if ($ct && $ct !~ /^text\/html/i) {
       return Apache2::Const::DECLINED;
+      $f->ctx(2);
     }
 
     # Do nothing if this is Javascript or looks like an image
     my $fn = $f->r->filename();
     if ($fn && $fn =~ /\.(js|jpg|png|gif|jpeg|zip|tar|gz|bz2|jar|rev|doc|xls|ppt|dd|swf)$/i) {
       return Apache2::Const::DECLINED;
+      $f->ctx(2);
     }
 
     # Work out the script we want to add
@@ -74,6 +82,8 @@ sub handler {
   
     my $added = 0;
     while ($f->read(my $buffer, 64000)) {
+        my $ct = $f->r->headers_out->get('Content-Type') ||
+	     $f->r->content_type();
 	if ($buffer =~ /^([\000-\377]*)(<\/head[^>]*>)([\000-\377]*)$/i &&
 	    $start_addscript) {
 	    # Adding just before closing head
