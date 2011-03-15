@@ -82,8 +82,6 @@ sub handler {
   
     my $added = 0;
     while ($f->read(my $buffer, 64000)) {
-        my $ct = $f->r->headers_out->get('Content-Type') ||
-	     $f->r->content_type();
 	if ($buffer =~ /^([\000-\377]*)(<\/head[^>]*>)([\000-\377]*)$/i &&
 	    $start_addscript) {
 	    # Adding just before closing head
