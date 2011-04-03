@@ -27,6 +27,8 @@ sub handler {
     my $woopra = $f->r->dir_config("WoopraID");
     my $piwik = $f->r->dir_config("PiwikID");
     my $piwik_url = $f->r->dir_config("PiwikURL");
+    my $headjs_file = $f->r->dir_config("HeadJavascriptFile");
+    my $bodyjs_file = $f->r->dir_config("BodyJavascriptFile");
     my $ssl =  $f->r->dir_config("SSL");
     if (!$account && !$mybloglog && !$quantcast && !$clicky &&
 	!$woopra && !$piwik) {
@@ -78,6 +80,20 @@ sub handler {
       my $piwik_sslurl = $piwik_url;
       $piwik_sslurl =~ s/^http:/https:/;
       $end_addscript .= "<script type=\"text/javascript\">var pkBaseURL = ((\"https:\" == document.location.protocol) ? \"$piwik_sslurl\" : \"$piwik_url\"); document.write(unescape(\"%3Cscript src='\" + pkBaseURL + \"piwik.js' type='text/javascript'%3E%3C/script%3E\"));</script><script type=\"text/javascript\">try { var piwikTracker = Piwik.getTracker(pkBaseURL + \"piwik.php\", $piwik); piwikTracker.trackPageView(); piwikTracker.enableLinkTracking(); } catch( err ) {}</script>";
+    }
+    my $headjs_fh;
+    if ($headjs_file && open($headjs_fh, $headjs_file)) {
+      local $/ = undef;
+      my $headjs = <$headjs_fh>;
+      close($headjs_fh);
+      $start_addscript .= $headjs;
+    }
+    my $bodyjs_fh;
+    if ($bodyjs_file && open($bodyjs_fh, $bodyjs_file)) {
+      local $/ = undef;
+      my $bodyjs = <$bodyjs_fh>;
+      close($bodyjs_fh);
+      $end_addscript .= $bodyjs;
     }
   
     my $added = 0;

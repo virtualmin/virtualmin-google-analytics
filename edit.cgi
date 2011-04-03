@@ -37,6 +37,16 @@ else {
 	}
 print &ui_table_row(&hlink($text{'edit_piwikurl'}, 'piwikurl'), $urlin);
 
+# Show field for arbitrary head and body javascript
+$headjs_file = &get_perlsetvar($d, "HeadJavascriptFile");
+$headjs = $headjs_file ? &read_file_contents($headjs_file) : undef;
+print &ui_table_row(&hlink($text{'edit_headjs'}, 'headjs'),
+	&ui_textarea("headjs", $headjs, 5, 60));
+$bodyjs_file = &get_perlsetvar($d, "BodyJavascriptFile");
+$bodyjs = $bodyjs_file ? &read_file_contents($bodyjs_file) : undef;
+print &ui_table_row(&hlink($text{'edit_bodyjs'}, 'bodyjs'),
+	&ui_textarea("bodyjs", $bodyjs, 5, 60));
+
 print &ui_table_end();
 print &ui_form_end([ [ "save", $text{'save'} ] ]);
 

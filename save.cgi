@@ -30,6 +30,32 @@ if (!$in{'piwikurl_def'}) {
 	&save_perlsetvar($d, $in{'piwikurl'}, "PiwikURL");
 	}
 
+# Save head and body javascript
+$headjs_file = &get_perlsetvar($d, "HeadJavascriptFile");
+if ($in{'headjs'} =~ /\S/) {
+	$headjs_file = "$module_config_directory/$d->{'id'}.head.js";
+	&open_tempfile(HEAD, ">$headjs_file");
+	&print_tempfile(HEAD, $in{'headjs'});
+	&close_tempfile(HEAD);
+	&set_ownership_permissions(undef, undef, 0755, $headjs_file);
+	&save_perlsetvar($d, $headjs_file, "HeadJavascriptFile");
+	}
+else {
+	&save_perlsetvar($d, undef, "HeadJavascriptFile");
+	}
+$bodyjs_file = &get_perlsetvar($d, "BodyJavascriptFile");
+if ($in{'bodyjs'} =~ /\S/) {
+	$bodyjs_file = "$module_config_directory/$d->{'id'}.body.js";
+	&open_tempfile(HEAD, ">$bodyjs_file");
+	&print_tempfile(HEAD, $in{'bodyjs'});
+	&close_tempfile(HEAD);
+	&set_ownership_permissions(undef, undef, 0755, $bodyjs_file);
+	&save_perlsetvar($d, $bodyjs_file, "BodyJavascriptFile");
+	}
+else {
+	&save_perlsetvar($d, undef, "BodyJavascriptFile");
+	}
+
 &virtual_server::run_post_actions();
 &webmin_log("save", undef, $d->{'dom'});
 
