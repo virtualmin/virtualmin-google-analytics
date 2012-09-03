@@ -20,6 +20,7 @@ index_eplugin=The Analytics plugin is not enabled in Virtualmin. Before it can b
 feat_name=Analytics Tracking
 feat_losing=Analytics will no longer track hits to this virtual server
 feat_label=Enable Analytics tracking?
+feat_label2=Analytics tracking
 feat_noperl=Apache's mod_perl version 2 must be installed
 feat_noapache=Apache version 2 must be installed
 feat_nodeflate=Apache's mod_deflate module must be disabled for analytics tracking to be able to insert HTML into web pages
