@@ -195,6 +195,23 @@ $parent->{'piwik_url'} = $url;
 &virtual_server::save_domain($parent);
 }
 
+# create_apachemod()
+# Creates the apachemod.pl command used by Apache to find the Perl module that
+# does the actual HTML modification
+sub create_apachemod
+{
+local $perl_path = &get_perl_path();
+&open_lock_tempfile(CMD, ">$apachemod_lib_cmd");
+&print_tempfile(CMD, <<EOF
+#!$perl_path
+use lib '$module_root_directory';
+1;
+EOF
+	);
+&close_tempfile(CMD);
+chmod(0755, $apachemod_lib_cmd);
+}
+
 1;
 
 1;

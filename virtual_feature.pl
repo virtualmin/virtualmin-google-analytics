@@ -41,6 +41,7 @@ return $text{'feat_noapache'} if ($apache::httpd_modules{'core'} < 2);
 return $text{'feat_nodeflate'} if ($apache::httpd_modules{'mod_deflate'});
 eval "use Apache2::Filter";
 return &text('feat_nomod', "<tt>Apache2::Filter</tt>") if ($@);
+&create_apachemod();
 return undef;
 }
 
@@ -150,16 +151,7 @@ else {
 	}
 
 # Create apachemod.pl
-local $perl_path = &get_perl_path();
-&open_lock_tempfile(CMD, ">$apachemod_lib_cmd");
-&print_tempfile(CMD, <<EOF
-#!$perl_path
-use lib '$module_root_directory';
-1;
-EOF
-	);
-&close_tempfile(CMD);
-chmod(0755, $apachemod_lib_cmd);
+&create_apachemod();
 
 &$virtual_server::second_print($virtual_server::text{'setup_done'});
 return 1;
