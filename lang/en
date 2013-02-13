@@ -31,6 +31,7 @@ feat_delete=Removing analytics tracking from website configuration ..
 feat_nomod=The $1 Perl module is not installed. Maybe mod_perl is not installed on your system, or it is not version 2?
 feat_notvalid=The Apache directives for analytics tracking are missing
 feat_ezlib=Analytics tracking cannot be enabled for virtual servers with PHP output compression enabled, using the $1 setting in $2
+feat_module=Virtualmin Analytics (for service configuration)
 
 edit_title=Edit Analytics Accounts
 edit_header=Analytics IDs for virtual server

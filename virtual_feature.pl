@@ -242,6 +242,11 @@ return ( { 'mod' => $module_name,
          } );
 }
 
+sub feature_modules
+{
+return ( [ $module_name, $text{'feat_module'} ] );
+}
+
 sub feature_validate
 {
 local ($d) = @_;
