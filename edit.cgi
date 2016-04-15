@@ -29,7 +29,7 @@ foreach $s (@tracking_services) {
 # Show base URL for Piwik
 $vurl = &get_perlsetvar($d, "PiwikURL");
 if ($vurl) {
-	$urlin = &ui_textbox("piwikurl", $vurl, 40);
+	$urlin = &ui_opt_textbox("piwikurl", $vurl, 40, $text{'edit_notset'});
 	}
 else {
 	$urlin = &ui_opt_textbox("piwikurl", &get_piwik_default_url($d), 40,
