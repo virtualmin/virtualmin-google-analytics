@@ -1,3 +1,10 @@
+use strict;
+use warnings;
+our %access;
+our $module_config_directory;
+our $module_root_directory;
+our @tracking_services;
+our $apachemod_lib_cmd;
 
 BEGIN { push(@INC, ".."); };
 eval "use WebminCore;";
@@ -24,7 +31,7 @@ $apachemod_lib_cmd = "$module_config_directory/apachemod.pl";
 # at the server's PerlSetVar directive.
 sub get_analytics_account
 {
-local ($d) = @_;
+my ($d) = @_;
 return &get_perlsetvar($d, "AnalyticsID");
 }
 
@@ -33,7 +40,7 @@ return &get_perlsetvar($d, "AnalyticsID");
 # at the server's PerlSetVar directive.
 sub get_quantcast_account
 {
-local ($d) = @_;
+my ($d) = @_;
 return &get_perlsetvar($d, "QuantcastID");
 }
 
@@ -42,7 +49,7 @@ return &get_perlsetvar($d, "QuantcastID");
 # at the server's PerlSetVar directive.
 sub get_clicky_account
 {
-local ($d) = @_;
+my ($d) = @_;
 return &get_perlsetvar($d, "ClickyID");
 }
 
@@ -51,7 +58,7 @@ return &get_perlsetvar($d, "ClickyID");
 # at the server's PerlSetVar directive. Not actually used in the JS though.
 sub get_woopra_account
 {
-local ($d) = @_;
+my ($d) = @_;
 return &get_perlsetvar($d, "WoopraID");
 }
 
@@ -60,18 +67,18 @@ return &get_perlsetvar($d, "WoopraID");
 # at the server's PerlSetVar directive.
 sub get_piwik_account
 {
-local ($d) = @_;
+my ($d) = @_;
 return &get_perlsetvar($d, "PiwikID");
 }
 
 # get_perlsetvar(&domain, name)
 sub get_perlsetvar
 {
-local ($d, $name) = @_;
-local ($virt, $vconf) = &virtual_server::get_apache_virtual($d->{'dom'},
+my ($d, $name) = @_;
+my ($virt, $vconf) = &virtual_server::get_apache_virtual($d->{'dom'},
 							    $d->{'web_port'});
 if ($virt) {
-	local @psv = &apache::find_directive("PerlSetVar", $vconf);
+	my @psv = &apache::find_directive("PerlSetVar", $vconf);
 	foreach my $psv (@psv) {
 		if ($psv =~ /^\Q$name\E\s+(\S+)/) {
 			return $1;
@@ -86,7 +93,7 @@ return undef;
 # the correct <script> section for Google Analytics.
 sub save_analytics_account
 {
-local ($d, $account) = @_;
+my ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "AnalyticsID");
 }
 
@@ -94,7 +101,7 @@ return &save_perlsetvar($d, $account, "AnalyticsID");
 # Adds directives for the MyBlogLog account ID
 sub save_quantcast_account
 {
-local ($d, $account) = @_;
+my ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "QuantcastID");
 }
 
@@ -102,7 +109,7 @@ return &save_perlsetvar($d, $account, "QuantcastID");
 # Adds directives for the Clicky account ID
 sub save_clicky_account
 {
-local ($d, $account) = @_;
+my ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "ClickyID");
 }
 
@@ -110,7 +117,7 @@ return &save_perlsetvar($d, $account, "ClickyID");
 # Adds directives for the Woopra account name
 sub save_woopra_account
 {
-local ($d, $account) = @_;
+my ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "WoopraID");
 }
 
@@ -118,27 +125,27 @@ return &save_perlsetvar($d, $account, "WoopraID");
 # Adds directives for the Piwik site ID
 sub save_piwik_account
 {
-local ($d, $account) = @_;
+my ($d, $account) = @_;
 return &save_perlsetvar($d, $account, "PiwikID");
 }
 
 # save_perlsetvar(&domain, account, name)
 sub save_perlsetvar
 {
-local ($d, $account, $name) = @_;
+my ($d, $account, $name) = @_;
 &virtual_server::obtain_lock_web($d)
         if (defined(&virtual_server::obtain_lock_web));
 &virtual_server::require_apache();
-local $conf = &apache::get_config();
-local @ports = ( $d->{'web_port'} );
+my $conf = &apache::get_config();
+my @ports = ( $d->{'web_port'} );
 push(@ports, $d->{'web_sslport'}) if ($d->{'ssl'});
-local $done = 0;
+my $done = 0;
 foreach my $p (@ports) {
-	local ($virt, $vconf) =
+	my ($virt, $vconf) =
 		&virtual_server::get_apache_virtual($d->{'dom'}, $p);
 	next if (!$virt);
-	local @psv = &apache::find_directive("PerlSetVar", $vconf);
-	local @oldpsv = @psv;
+	my @psv = &apache::find_directive("PerlSetVar", $vconf);
+	my @oldpsv = @psv;
 	@psv = grep { !/^\Q$name\E/ } @psv;
 	if ($account) {
 		push(@psv, "$name $account");
@@ -162,13 +169,13 @@ return $done;
 # integration (PerlOutputFilterHandler and PerlRequire)
 sub has_analytics_directives
 {
-local ($d) = @_;
-local ($virt, $vconf) = &virtual_server::get_apache_virtual($d->{'dom'},
+my ($d) = @_;
+my ($virt, $vconf) = &virtual_server::get_apache_virtual($d->{'dom'},
 							    $d->{'web_port'});
-local @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
+my @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
 @pof = grep { $_ eq "Virtualmin::GoogleAnalytics" } @pof;
 return 0 if (!@pof);
-local @prq = &apache::find_directive("PerlRequire", $vconf);
+my @prq = &apache::find_directive("PerlRequire", $vconf);
 @prq = grep { $_ eq "$module_config_directory/apachemod.pl" } @prq;
 return 0 if (!@prq);
 return 1;
@@ -178,8 +185,8 @@ return 1;
 # Returns the default piwik URL. This is keyed off the top-level domain
 sub get_piwik_default_url
 {
-local ($d) = @_;
-local $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
+my ($d) = @_;
+my $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
 			       : $d;
 return $parent->{'piwik_url'};
 }
@@ -188,8 +195,8 @@ return $parent->{'piwik_url'};
 # Set the piwik default base URL
 sub save_piwik_default_url
 {
-local ($d, $url) = @_;
-local $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
+my ($d, $url) = @_;
+my $parent = $d->{'parent'} ? &virtual_server::get_domain($d->{'parent'})
 			       : $d;
 $parent->{'piwik_url'} = $url;
 &virtual_server::save_domain($parent);
@@ -200,7 +207,8 @@ $parent->{'piwik_url'} = $url;
 # does the actual HTML modification
 sub create_apachemod
 {
-local $perl_path = &get_perl_path();
+my $perl_path = &get_perl_path();
+no strict "subs";
 &open_lock_tempfile(CMD, ">$apachemod_lib_cmd");
 &print_tempfile(CMD, <<EOF
 #!$perl_path
@@ -209,6 +217,7 @@ use lib '$module_root_directory';
 EOF
 	);
 &close_tempfile(CMD);
+use strict "subs";
 chmod(0755, $apachemod_lib_cmd);
 }
 

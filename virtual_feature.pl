@@ -1,4 +1,9 @@
 # Defines functions for this feature
+use strict;
+use warnings;
+our %text;
+our $module_name;
+our $apachemod_lib_cmd;
 
 require 'virtualmin-google-analytics-lib.pl';
 
@@ -21,7 +26,7 @@ return $text{'feat_losing'};
 # editing form
 sub feature_label
 {
-local ($edit) = @_;
+my ($edit) = @_;
 return $edit ? $text{'feat_label2'} : $text{'feat_label'};
 }
 
@@ -50,15 +55,15 @@ return undef;
 # or an error message if not
 sub feature_depends
 {
-local ($d, $oldd) = @_;
+my ($d, $oldd) = @_;
 return $text{'feat_edepweb'} if (!$d->{'web'});
 if (defined(&virtual_server::list_domain_php_inis) &&
     &foreign_check("phpini") &&
     (!$oldd || !$oldd->{$module_name})) {
 	&foreign_require("phpini", "phpini-lib.pl");
 	foreach my $ini (&virtual_server::list_domain_php_inis($d)) {
-		local $pconf = &phpini::get_config($ini->[1]);
-		local $comp = &phpini::find_value(
+		my $pconf = &phpini::get_config($ini->[1]);
+		my $comp = &phpini::find_value(
 			"zlib.output_compression", $pconf);
 		if (lc($comp) =~ /on|true|yes/) {
 			return &text('feat_ezlib',
@@ -84,7 +89,7 @@ return undef;
 # parent domains
 sub feature_suitable
 {
-local ($parentdom, $aliasdom, $subdom) = @_;
+my ($parentdom, $aliasdom, $subdom) = @_;
 return $aliasdom ? 0 : 1;	# not for alias domains
 }
 
@@ -93,8 +98,8 @@ return $aliasdom ? 0 : 1;	# not for alias domains
 # or 0 if not
 sub feature_import
 {
-local ($dname, $user, $db) = @_;
-local $fakedom = { 'dom' => $dname };
+my ($dname, $user, $db) = @_;
+my $fakedom = { 'dom' => $dname };
 return &has_analytics_directives($fakedom);
 }
 
@@ -102,35 +107,35 @@ return &has_analytics_directives($fakedom);
 # Called when this feature is added, with the domain object as a parameter
 sub feature_setup
 {
-local ($d) = @_;
+my ($d) = @_;
 &$virtual_server::first_print($text{'feat_setup'});
 &virtual_server::obtain_lock_web($_[0])
         if (defined(&virtual_server::obtain_lock_web));
 
 &virtual_server::require_apache();
-local $conf = &apache::get_config();
-local @ports = ( $d->{'web_port'} );
+my $conf = &apache::get_config();
+my @ports = ( $d->{'web_port'} );
 push(@ports, $d->{'web_sslport'}) if ($d->{'ssl'});
-local $done = 0;
+my $done = 0;
 foreach my $p (@ports) {
-	local ($virt, $vconf) =
+	my ($virt, $vconf) =
 		&virtual_server::get_apache_virtual($d->{'dom'}, $p);
 	next if (!$virt);
 
 	# Add PerlRequire for apachemod.pl, which sets lib path
 	&lock_file($virt->{'file'});
-	local @prq = &apache::find_directive("PerlRequire", $vconf);
+	my @prq = &apache::find_directive("PerlRequire", $vconf);
 	push(@prq, $apachemod_lib_cmd);
 	&apache::save_directive("PerlRequire", \@prq, $vconf, $conf);
 
 	# Add filter directive
-	local @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
+	my @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
 	push(@pof, "Virtualmin::GoogleAnalytics");
 	&apache::save_directive("PerlOutputFilterHandler", \@pof, $vconf,$conf);
 
 	# Add PerlSetVar SSL
 	if ($p == $d->{'web_sslport'}) {
-		local @psv = &apache::find_directive("PerlSetVar", $vconf);
+		my @psv = &apache::find_directive("PerlSetVar", $vconf);
 		@psv = &unique(@psv, "SSL 1");
 		&apache::save_directive("PerlSetVar", \@psv, $vconf, $conf);
 		}
@@ -169,29 +174,29 @@ return 1;
 # Called when this feature is disabled, or when the domain is being deleted
 sub feature_delete
 {
-local ($d) = @_;
+my ($d) = @_;
 &$virtual_server::first_print($text{'feat_delete'});
 &virtual_server::obtain_lock_web($_[0])
         if (defined(&virtual_server::obtain_lock_web));
 
 &virtual_server::require_apache();
-local $conf = &apache::get_config();
-local @ports = ( $d->{'web_port'} );
+my $conf = &apache::get_config();
+my @ports = ( $d->{'web_port'} );
 push(@ports, $d->{'web_sslport'}) if ($d->{'ssl'});
-local $done = 0;
+my $done = 0;
 foreach my $p (@ports) {
-	local ($virt, $vconf) =
+	my ($virt, $vconf) =
 		&virtual_server::get_apache_virtual($d->{'dom'}, $p);
 	next if (!$virt);
 
 	# Remove PerlRequire and PerlOutputFilterHandler
 	&lock_file($virt->{'file'});
-	local @prq = &apache::find_directive("PerlRequire", $vconf);
-	local @newprq = grep { $_ ne $apachemod_lib_cmd } @prq;
+	my @prq = &apache::find_directive("PerlRequire", $vconf);
+	my @newprq = grep { $_ ne $apachemod_lib_cmd } @prq;
 	&apache::save_directive("PerlRequire", \@newprq,
 				$vconf, $conf);
-	local @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
-	local @newpof = grep { $_ ne "Virtualmin::GoogleAnalytics" } @pof;
+	my @pof = &apache::find_directive("PerlOutputFilterHandler", $vconf);
+	my @newpof = grep { $_ ne "Virtualmin::GoogleAnalytics" } @pof;
 	&apache::save_directive("PerlOutputFilterHandler", \@newpof,
 				$vconf, $conf);
 
@@ -218,7 +223,7 @@ else {
 # the Webmin user when this feature is enabled
 sub feature_webmin
 {
-local @doms = map { $_->{'dom'} } grep { $_->{$module_name} } @{$_[1]};
+my @doms = map { $_->{'dom'} } grep { $_->{$module_name} } @{$_[1]};
 if (@doms) {
 	return ( [ $module_name,
 		   { 'domains' => join(" ", @doms),
@@ -234,7 +239,7 @@ else {
 # Returns an array of link objects for webmin modules for this feature
 sub feature_links
 {
-local ($d) = @_;
+my ($d) = @_;
 return ( { 'mod' => $module_name,
 	   'desc' => $text{'links_link'},
 	   'page' => 'edit.cgi?dom='.&urlize($d->{'id'})."&virtualmin=1",
@@ -249,7 +254,7 @@ return ( [ $module_name, $text{'feat_module'} ] );
 
 sub feature_validate
 {
-local ($d) = @_;
+my ($d) = @_;
 return &has_analytics_directives($d) ? undef : $text{'feat_notvalid'};
 }
 
