@@ -31,7 +31,7 @@ sub handler {
     my $bodyjs_file = $f->r->dir_config("BodyJavascriptFile");
     my $ssl =  $f->r->dir_config("SSL");
     if (!$account && !$mybloglog && !$quantcast && !$clicky &&
-	!$woopra && !$piwik) {
+	!$woopra && !$piwik && !$headjs_file && !$bodyjs_file) {
       # No account set yet, so nothing to do!
       return Apache2::Const::DECLINED;
     }
