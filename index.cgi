@@ -18,10 +18,8 @@ if (!@doms) {
 	}
 elsif (&indexof($module_name, @virtual_server::confplugins) < 0) {
 	# Plugin is not enabled
-	my $cgi = $virtual_server::module_info{'version'} >= 3.47 ?
-		"edit_newfeatures.cgi" : "edit_newplugins.cgi";
 	print "<b>",&text('index_eplugin',
-		"../virtual-server/$cgi"),"</b><p>\n";
+		"../virtual-server/edit_newfeatures.cgi"),"</b><p>\n";
 	}
 else {
 	# Make table rows
